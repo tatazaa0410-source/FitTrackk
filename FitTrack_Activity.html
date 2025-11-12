@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FITTRACK - เพิ่มกิจกรรม</title>
+    <link rel="stylesheet" href="FitTrack.css">
+</head>
+<body>
+    <div class="container">
+        <div class="top-section">
+            <a href="index.html" class="back-button">กลับ</a>
+            <div class="header">
+                <h1>FITTRACK</h1>
+            </div>
+        </div>
+        <div class="activity-form">
+            <label>
+                <input type="radio" name="activity" value="walk"> เดิน
+            </label>
+            <label>
+                <input type="radio" name="activity" value="bike"> ปั่นจักรยาน
+            </label>
+            <hr>
+            <div class="input-group">
+                <div>
+                    <label for="date">วันที่</label>
+                    <input type="text" id="date" name="date" placeholder="วว/ดด/ปป" maxlength="10" onkeyup="dateFormatter(this)">
+                </div>
+                <div>
+                    <label for="time">ระยะเวลา (นาที)</label>
+                    <input type="text" id="time" name="time" placeholder="00">
+                </div>
+            </div>
+            <div class="input-group">
+                <div>
+                    <label for="distance">ระยะทาง (กม.)</label>
+                    <input type="text" id="distance" name="distance" placeholder="0.0">
+                </div>
+                <div>
+                    </div>
+            </div>
+        </div>
+        <button class="save-button">บันทึกผล</button>
+    </div>
+
+
+
+    <script>
+        function dateFormatter(input) {
+            let value = input.value.replace(/\D/g, '');
+
+            if (value.length > 2 && value.length <= 4) {
+                value = value.substring(0, 2) + '/' + value.substring(2, value.length);
+            } else if (value.length > 4) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4) + '/' + value.substring(4, 8);
+            }
+            input.value = value;
+        }
+
+        document.querySelector('.save-button').addEventListener('click', function() {
+            const activity = document.querySelector('input[name="activity"]:checked');
+            const dateInput = document.getElementById('date');
+            const date = dateInput.value;
+            const time = document.getElementById('time').value;
+            const distance = document.getElementById('distance').value;
+
+            if (!activity || !date || !time || !distance || date.length !== 10) {
+                alert('กรุณากรอกข้อมูลให้ครบถ้วนและเลือกกิจกรรม (วันที่ต้องครบ 8 ตัวเลขในรูปแบบ วว/ดด/ปป)');
+                return;
+            }
+
+            const newActivity = {
+                type: activity.value === 'walk' ? 'เดิน' : 'ปั่นจักรยาน',
+                distance: distance + ' กม.',
+                time: time + ' นาที',
+                date: date
+            };
+            let activities = JSON.parse(localStorage.getItem('fittrack_activities')) || [];
+            activities.unshift(newActivity);
+            localStorage.setItem('fittrack_activities', JSON.stringify(activities));
+
+            alert('บันทึกผลสำเร็จ!');
+            window.location.href = 'FitTrack_history.html';
+        });
+    </script>
+</body>
+</html>
